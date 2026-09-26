@@ -1,0 +1,20 @@
+export const pages = [
+    "https://dealerportal.kalyanicrm.com/dashboard",
+    "https://dealerportal.kalyanicrm.com/marketplace",
+    "https://dealerportal.kalyanicrm.com/wishlist",
+    "https://dealerportal.kalyanicrm.com/awards",
+    "https://dealerportal.kalyanicrm.com/awards/8fb67c8c-9850-4674-a9be-5e5838ed19be",
+    "https://dealerportal.kalyanicrm.com/awards/b9ac9a6a-1d67-4aae-97fb-850bade6afec",
+    "https://dealerportal.kalyanicrm.com/deals",
+    "https://dealerportal.kalyanicrm.com/marketplace/dc1ffdaf-96a1-4037-9320-6bd5d6aa77f0?eventId=5bd68f84-867d-47bd-ac9f-ba4b49d52401&lane=parallel",
+    "https://dealerportal.kalyanicrm.com/marketplace/ca16aae0-a40e-474a-a8b9-37edd43af9e2?eventId=5bd68f84-867d-47bd-ac9f-ba4b49d52401&lane=parallel",
+    "https://dealerportal.kalyanicrm.com/rc-follow-ups",
+    "https://dealerportal.kalyanicrm.com/account-balance",
+    "https://dealerportal.kalyanicrm.com/rc-follow-ups/307e723c-3480-4590-91d8-612937677367",
+    "https://dealerportal.kalyanicrm.com/referrals",
+    "https://dealerportal.kalyanicrm.com/profile",
+    "https://dealerportal.kalyanicrm.com/deals/1a842357-8e06-4ee6-9982-6ac6273b1fa4",
+    "https://dealerportal.kalyanicrm.com/deals/40d2b4fc-0d2a-4064-9ce7-9246de48136a",
+    "https://dealerportal.kalyanicrm.com/referrals/new",
+    "https://dealerportal.kalyanicrm.com/plans"
+]
