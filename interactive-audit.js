@@ -25,6 +25,7 @@ await setupPage.close();
 console.log("Login complete.");
 
 const results = [];
+const allPageInputs = [];
 const SELECTOR = 'button, [role="button"], [role="tab"], [role="menuitem"], [role="switch"], input[type="button"], input[type="submit"], input[type="reset"], summary';
 
 function normalize(value) {
@@ -53,6 +54,133 @@ async function discoverControls(page) {
         });
     });
 }
+
+async function discoverInputs(page, currentUrl) {
+    return await page.evaluate((url) => {
+        const inputs = Array.from(document.querySelectorAll('input:not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]), textarea, select'));
+
+        return inputs.map((el, index) => {
+            // Check HTML5, ARIA, and visual label indicators for 'required' state
+            let isRequired = el.required || el.getAttribute('aria-required') === 'true';
+
+            if (!isRequired && el.id) {
+                const label = document.querySelector(`label[for="${el.id}"]`);
+                if (label && label.innerText.includes('*')) {
+                    isRequired = true;
+                }
+            }
+
+            return {
+                index,
+                tag: el.tagName.toLowerCase(),
+                type: el.getAttribute('type') || 'text',
+                name: el.name || el.id || el.getAttribute('aria-label') || el.placeholder || '(unnamed input)',
+                required: isRequired,
+                disabled: el.disabled || el.getAttribute('aria-disabled') === 'true',
+                hasFormParent: !!el.closest('form')
+            };
+        });
+    }, currentUrl);
+}
+
+async function safeValidateInputs(page, discoveredInputs) {
+    const testedFields = [];
+    const inputLocators = page.locator('input:not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]), textarea, select');
+
+    for (const inputMeta of discoveredInputs) {
+        if (inputMeta.disabled) continue;
+
+        const locator = inputLocators.nth(inputMeta.index);
+
+        try {
+            // Skip invisible elements (e.g. hidden file inputs, off-screen backing inputs)
+            const isVisible = await locator.isVisible();
+            if (!isVisible) {
+                testedFields.push({ ...inputMeta, validationCaught: "SKIPPED", reason: "Element is invisible" });
+                continue;
+            }
+
+            // Skip read-only elements (e.g. datepickers, auto-calculated fields)
+            const isReadOnly = await locator.getAttribute('readonly') !== null;
+            if (isReadOnly) {
+                testedFields.push({ ...inputMeta, validationCaught: "SKIPPED", reason: "Element is read-only" });
+                continue;
+            }
+
+            await locator.scrollIntoViewIfNeeded();
+
+            let testPayload = 'Test123!@#';
+            if (inputMeta.type === 'email') testPayload = 'invalid-email-format';
+            if (['number', 'tel'].includes(inputMeta.type)) testPayload = '9999999999999999';
+
+            let inputRejectedByMask = false;
+
+            // Handle dropdowns gracefully without crashing
+            if (inputMeta.tag === 'select') {
+                await locator.focus();
+                await locator.blur();
+                testPayload = '(Focused and blurred select)';
+            } else {
+                // Clear input and type sequentially to trigger React state
+                await locator.clear();
+                await locator.pressSequentially(testPayload, { delay: 10 });
+                await locator.blur();
+
+                await page.waitForTimeout(400); // Allow React to render state/errors
+
+                // Check if the input mask blocked our typing
+                const valAfter = await locator.inputValue().catch(() => '');
+                if (valAfter !== testPayload && valAfter.length < testPayload.length) {
+                    inputRejectedByMask = true;
+                }
+            }
+
+            // Check for standard ARIA invalidation
+            const ariaInvalid = await locator.getAttribute('aria-invalid');
+
+            // Broaden the search for red error text in the parent container
+            const hasErrorTextNearby = await locator.evaluate(node => {
+                // Go up a few levels to find the field container
+                const container = node.closest('.space-y-2, div, form') || node.parentElement;
+                if (!container) return false;
+                const html = container.innerHTML.toLowerCase();
+                return html.includes('text-red') || html.includes('text-destructive') || html.includes('error');
+            });
+
+            let status = "FAIL";
+            let reason = "Accepted invalid payload without throwing UI error or masking";
+
+            // Determine if the frontend successfully blocked the bad data
+            if (inputRejectedByMask) {
+                status = "PASS";
+                reason = "Input mask successfully blocked invalid characters";
+            } else if (ariaInvalid === 'true' || hasErrorTextNearby) {
+                status = "PASS";
+                reason = "UI error message or aria-invalid detected upon blur";
+            } else if (!inputMeta.hasFormParent && !inputMeta.required) {
+                // Search bars and loose filters naturally accept anything and don't throw errors
+                status = "INVESTIGATE";
+                reason = "Loose input accepted text. Likely a search/filter bar.";
+            }
+
+            testedFields.push({
+                ...inputMeta,
+                testedPayload: testPayload,
+                validationCaught: status,
+                reason: reason
+            });
+
+        } catch (error) {
+            testedFields.push({
+                ...inputMeta,
+                validationCaught: "ERROR",
+                reason: error.message
+            });
+        }
+    }
+    return testedFields;
+}
+
 
 async function captureUiState(page, locator) {
     let elementState = { ariaExpanded: null, ariaSelected: null, ariaPressed: null, className: null };
@@ -141,17 +269,40 @@ for (const url of pages) {
     });
 
     page.on("requestfailed", request => {
-        failedRequests.push({
-            url: request.url(),
-            method: request.method(),
-            failure: request.failure()?.errorText || null
-        });
+        const failureText = request.failure()?.errorText || "";
+
+        // Ignore aborted requests — they are intentional in modern SPA frameworks
+        // (e.g., React unmounting a component cancels its in-flight fetches)
+        if (failureText !== "net::ERR_ABORTED") {
+            failedRequests.push({
+                url: request.url(),
+                method: request.method(),
+                failure: failureText
+            });
+        }
     });
 
     try {
         await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
         await page.waitForTimeout(1500);
 
+        // --- PHASE 3: INPUT & VALIDATION DISCOVERY ---
+        const discoveredInputs = await discoverInputs(page, url);
+
+        if (discoveredInputs.length > 0) {
+            const validationResults = await safeValidateInputs(page, discoveredInputs);
+            allPageInputs.push({
+                path: url,
+                totalInputs: validationResults.length,
+                fields: validationResults
+            });
+        }
+
+        // Reload to clear any validation state before button testing
+        await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+        await page.waitForTimeout(1000);
+
+        // --- PHASE 1 & 2: INTERACTIVE BUTTON TESTING ---
         const interactiveElements = await discoverControls(page);
 
         const pageResult = {
@@ -304,7 +455,7 @@ const allElements = results.flatMap(p => p.interactiveElements || []);
 
 const report = {
     generatedAt: new Date().toISOString(),
-    auditType: "interactive",
+    auditType: "interactive_and_forms",
     summary: {
         pagesTested: pages.length,
         totalElementsTested: allElements.length,
@@ -312,9 +463,11 @@ const report = {
         failed: allElements.filter(e => e.status === "FAIL").length,
         firedMultiples: allElements.filter(e => e.debounceTest && !e.debounceTest.passed).length,
         investigate: allElements.filter(e => e.status === "INVESTIGATE").length,
-        skipped: allElements.filter(e => e.status === "SKIPPED").length
+        skipped: allElements.filter(e => e.status === "SKIPPED").length,
+        inputsLocated: allPageInputs.reduce((sum, page) => sum + page.totalInputs, 0)
     },
-    pages: results
+    pages: results,
+    inputValidation: allPageInputs
 };
 
 console.log(JSON.stringify(report, null, 2));
