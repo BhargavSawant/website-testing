@@ -210,7 +210,7 @@ async function testButtonDebounce(page, elementIndex) {
 // --- MAIN EXECUTION ---
 for (const env of environments) {
     console.log(`\n🚀 Booting environment: ${env.name}`);
-    const browser = await env.engine.launch({ headless: false });
+    const browser = await env.engine.launch({ headless: true });
     const context = await browser.newContext(env.contextOptions);
 
     console.log(`Logging in on ${env.name}...`);
