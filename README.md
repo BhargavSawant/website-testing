@@ -1,4 +1,4 @@
-# UDMS Dealer Portal — Functional Testing Suite
+# Website — Functional Testing Suite
 
 Automated UI testing framework for the [Dealer Portal](https://dealerportal.kalyanicrm.com) built with **Playwright**. Tests interactive elements (buttons, links, inputs) across pages to detect broken controls, missing validations, debounce failures, and cross-browser inconsistencies.
 
