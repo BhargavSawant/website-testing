@@ -187,14 +187,16 @@ for (const url of pages) {
     });
 
     page.on("requestfailed", request => {
+        const failureText = request.failure()?.errorText || "";
 
-        failedRequests.push({
-            url: request.url(),
-            method: request.method(),
-            failure:
-                request.failure()?.errorText || null
-        });
-
+        // Ignore aborted requests — they are intentional in modern SPA frameworks
+        if (failureText !== "net::ERR_ABORTED") {
+            failedRequests.push({
+                url: request.url(),
+                method: request.method(),
+                failure: failureText
+            });
+        }
     });
 
     try {
