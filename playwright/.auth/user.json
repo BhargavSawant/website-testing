@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "name": "dealer_at",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNjE3MzZjNy1mN2YwLTQxOGUtOWVkMC04OGQwNDljZmYxOTYiLCJleHAiOjE3OTA3NTQwMTMsInR5cGUiOiJhY2Nlc3MifQ.a0WfnsQgkUoTKZYCcU1QDElxtAnUDrQQMq6w0TW0A4A",
+      "domain": "dealerportal.kalyanicrm.com",
+      "path": "/",
+      "expires": 1791357015.072207,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://dealerportal.kalyanicrm.com",
+      "localStorage": [
+        {
+          "name": "dealer-auth",
+          "value": "{\"state\":{\"accessToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNjE3MzZjNy1mN2YwLTQxOGUtOWVkMC04OGQwNDljZmYxOTYiLCJleHAiOjE3OTA3NTQwMTMsInR5cGUiOiJhY2Nlc3MifQ.a0WfnsQgkUoTKZYCcU1QDElxtAnUDrQQMq6w0TW0A4A\",\"refreshToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNjE3MzZjNy1mN2YwLTQxOGUtOWVkMC04OGQwNDljZmYxOTYiLCJleHAiOjE3OTEzNTcwMTMsInR5cGUiOiJyZWZyZXNoIiwianRpIjoiNzUzMGE1YWMtMDM4Yi00MDZlLWIzMmYtNjY2M2RjZWY4YzQ4In0.RaZ2b5lH8Xf0HRDkNv7eyDJX5f4Bz5oX32kEmce3eVU\",\"user\":{\"id\":\"a61736c7-f7f0-418e-9ed0-88d049cff196\",\"email\":\"bhargavtest\",\"full_name\":\"Bhargav Sawant\",\"is_active\":true,\"broker_id\":\"d1641a51-3982-42d8-a85e-6d2857b5d6d4\",\"broker_company_name\":null,\"roles\":[{\"id\":\"4816bf10-6afc-4069-a125-4b5557093b5f\",\"name\":\"Broker\",\"slug\":\"broker\"}],\"username\":null,\"phone\":null,\"contact_email\":null,\"id_card_url\":null,\"id_card_original_filename\":null,\"id_card_mime_type\":null},\"broker\":{\"id\":\"d1641a51-3982-42d8-a85e-6d2857b5d6d4\",\"broker_code\":\"UDMS000824\",\"broker_type\":\"showroom\",\"operational_tier\":\"elite\",\"registration_stage\":\"active\",\"vehicles_on_display\":null,\"buying_areas_json\":\"[\\\"AR\\\", \\\"DD\\\", \\\"KL\\\", \\\"MP\\\", \\\"TN\\\", \\\"UK\\\"]\",\"process_buy_sell\":false,\"process_rc_transfer\":false,\"invited_at\":null,\"activated_at\":\"2026-09-03T09:43:41\",\"company_name\":\"Bhargav Sawant\",\"contact_name\":\"Bhargav\",\"email\":\"bhargavsawant@gmail.com\",\"phone\":\"7353531295\",\"address\":\"Malleswaram, PIN 560055\",\"license_number\":null,\"documents_json\":null,\"status\":\"active\",\"notes\":null,\"latitude\":null,\"longitude\":null,\"profile_photo_url\":\"https://udms.kalyanicrm.com/api/files/bms_broker_profile/d1641a51-3982-42d8-a85e-6d2857b5d6d4/20260903_091937_6902f02aa190.jpeg\",\"age\":null,\"years_in_industry\":null,\"operational_income_annual\":null,\"estimated_net_worth\":null,\"annual_vehicle_units\":null,\"team_size\":0,\"tax_id_gstin\":\"27AAPFU0939F1ZV\",\"business_registration_number\":null,\"pan_number\":\"CPPPB6096H\",\"pin_code\":\"560055\",\"phone_secondary\":\"8971885049\",\"business_classification\":\"BROKER_SUB_DEALER\",\"gst_enrolled\":true,\"new_car_referral_program\":\"MAYBE\",\"registration_profile_json\":\"{\\\"showroomPresence\\\":false,\\\"showroomCapacity\\\":null,\\\"cityDistrictTown\\\":\\\"Banglore\\\",\\\"rtoJurisdictions\\\":\\\"RR nagar\\\",\\\"avgMonthlySales\\\":15,\\\"interstateProcurement\\\":false,\\\"statesOfOperation\\\":[\\\"AR\\\",\\\"DD\\\",\\\"KL\\\",\\\"MP\\\",\\\"TN\\\",\\\"UK\\\"],\\\"financeTieUp\\\":false,\\\"financeProvider\\\":null,\\\"refurbishmentFacility\\\":false,\\\"vehicleSegmentFocus\\\":[],\\\"preferredBrands\\\":[],\\\"additionalPreferredBrands\\\":[],\\\"nonPreferredBrands\\\":null,\\\"declarationDate\\\":\\\"2026-09-03\\\",\\\"declarationPlace\\\":\\\"Banglore \\\",\\\"declarationFullName\\\":\\\"Bhargav Sawant\\\",\\\"termsAccepted\\\":true,\\\"performanceRating\\\":\\\"A\\\",\\\"managementRemarks\\\":null,\\\"verifiedByName\\\":\\\"Bhargav-IT\\\",\\\"docsVerifiedAcknowledged\\\":true}\",\"created_by_id\":\"333a2b67-9970-4a31-a3f5-bded1fb4e1d3\",\"created_by_name\":null,\"has_rejected_docs\":false,\"created_at\":\"2026-09-03T09:19:37Z\",\"updated_at\":\"2026-09-09T12:56:04Z\"},\"access\":{\"can_bid\":true,\"can_view_live_catalog\":true,\"reason\":\"active\",\"registration_stage\":\"active\"}},\"version\":0}"
+        }
+      ]
+    }
+  ]
+}
