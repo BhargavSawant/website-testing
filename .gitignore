@@ -5,4 +5,4 @@ test-results/
 visual-spec.js-snapshots/
 playwright-report/
 auth.setup.js
-playwright/.auth/
+playwright/
